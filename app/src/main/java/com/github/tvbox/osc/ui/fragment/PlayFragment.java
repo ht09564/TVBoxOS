@@ -191,10 +191,15 @@ public class PlayFragment extends BaseLazyFragment {
     }
 
     void setTip(String msg, boolean loading, boolean err) {
-        mPlayLoadTip.setText(msg);
-        mPlayLoadTip.setVisibility(View.VISIBLE);
-        mPlayLoading.setVisibility(loading ? View.VISIBLE : View.GONE);
-        mPlayLoadErr.setVisibility(err ? View.VISIBLE : View.GONE);
+        requireActivity().runOnUiThread(new Runnable() { //影魔
+            @Override
+            public void run() {
+                mPlayLoadTip.setText(msg);
+                mPlayLoadTip.setVisibility(View.VISIBLE);
+                mPlayLoading.setVisibility(loading ? View.VISIBLE : View.GONE);
+                mPlayLoadErr.setVisibility(err ? View.VISIBLE : View.GONE);
+            }
+        });
     }
 
     void hideTip() {
@@ -553,7 +558,7 @@ public class PlayFragment extends BaseLazyFragment {
         }
         String msg = jsonPlayData.optString("msg", "");
         if (url.startsWith("//")) {
-            url = "https:" + url;
+            url = "http:" + url;
         }
         if (!url.startsWith("http")) {
             return null;
