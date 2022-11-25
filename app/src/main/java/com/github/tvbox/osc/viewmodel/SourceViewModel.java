@@ -254,6 +254,7 @@ public class SourceViewModel extends ViewModel {
                     .params("ac", type == 0 ? "videolist" : "detail")
                     .params("t", sortData.id)
                     .params("pg", page)
+                    .params(sortData.filterSelect)
                     .execute(new AbsCallback<String>() {
 
                         @Override
@@ -480,7 +481,10 @@ public class SourceViewModel extends ViewModel {
         if (type == 3) {
             try {
                 Spider sp = ApiConfig.get().getCSP(sourceBean);
-                json(searchResult, sp.searchContent(wd, false), sourceBean.getKey());
+                String search = sp.searchContent(wd, false);
+                if(!search.isEmpty()){
+                    json(searchResult, search, sourceBean.getKey());
+                }
             } catch (Throwable th) {
                 th.printStackTrace();
             }
@@ -630,7 +634,7 @@ public class SourceViewModel extends ViewModel {
         }
     }
     // playerContent
-    public void getPlay(String sourceKey, String playFlag, String progressKey, String url) {
+    public void getPlay(String sourceKey, String playFlag, String progressKey, String url, String subtitleKey) {
         SourceBean sourceBean = ApiConfig.get().getSource(sourceKey);
         int type = sourceBean.getType();
         if (type == 3) {
@@ -643,6 +647,7 @@ public class SourceViewModel extends ViewModel {
                         JSONObject result = new JSONObject(json);
                         result.put("key", url);
                         result.put("proKey", progressKey);
+                        result.put("subtKey", subtitleKey);
                         if (!result.has("flag"))
                             result.put("flag", playFlag);
                         playResult.postValue(result);
